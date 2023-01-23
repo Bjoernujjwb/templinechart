@@ -21,12 +21,12 @@ import {
   initialDate,
 } from "./optionsCollection";
 import { useDataAxes } from "../Graph/useDataAxes";
-import { useDataDatenstand} from "../Graph/useDataBjörn"
+import { useDataDatenstand } from "../Graph/useDataBjörn";
 
 export const MethodenDiv = () => {
-    // Tabelle mit Button eine und ausblende -----------------------------------
+  // Tabelle mit Button eine und ausblende -----------------------------------
 
-    const [dataTabelleMethode, setdataTabelleMethode] =
+  const [dataTabelleMethode, setdataTabelleMethode] =
     useState(initialValueTabelle);
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -52,7 +52,6 @@ export const MethodenDiv = () => {
     div1.classList.remove("hidden");
     div1.classList.add("visible");
   }
-
 
   //Const to show and hide the line for the method ----------------------------------------------------------
   const [isDatenstand, setDatenstand] = useState(false);
@@ -83,7 +82,9 @@ export const MethodenDiv = () => {
     setEpiforecast(!isEpiforecast);
   }
   function handleClickILM() {
-    setILM(!isILM);
+    if (selectedScope === "DE") {
+      setILM(!isILM);
+    }
   }
   function handleClickKIT() {
     setKIT(!isKIT);
@@ -117,8 +118,15 @@ export const MethodenDiv = () => {
 
   //Importing the data for the graph
 
+  const data = useDataAxes(
+    "KIT-simple_nowcast",
+    menuAge,
+    selectedScope,
+    intervall,
+    anzeige,
+    date
+  );
 
- 
   const EPIdata = useData(
     "Epiforecasts-independent",
     menuAge,
@@ -127,14 +135,9 @@ export const MethodenDiv = () => {
     anzeige,
     date
   );
-  // const ILMdata = useData(
-  //   "ILM-prop",
-  //   menuAge,
-  //   selectedScope,
-  //   intervall,
-  //   anzeige,
-  //   date
-  // );
+
+  const ILMdata = useData("ILM-prop", menuAge, "DE", intervall, anzeige, date);
+
   const KITdata = useData(
     "KIT-simple_nowcast",
     menuAge,
@@ -193,15 +196,6 @@ export const MethodenDiv = () => {
     date
   );
 
-  const data = useDataAxes(
-    "KIT-simple_nowcast",
-    menuAge,
-    selectedScope,
-    intervall,
-    anzeige,
-    date
-  );
-
   const datenstand_schwarz = useDataDatenstand(
     "KIT-simple_nowcast",
     menuAge,
@@ -211,27 +205,37 @@ export const MethodenDiv = () => {
     date
   );
 
+  // let datesAfterEnde = useDataDatenstand(datenstand_schwarz);
+
   return (
     <div>
       <div id="menuBand">
-
-      {/* Methoden Button ----------------------------------------------------------- */}   
-      <div class="Methoden">
-        
-          <button className=" btn btn-light button-method-exp" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample" onClick={handleClick}>
+        {/* Methoden Button ----------------------------------------------------------- */}
+        <div class="Methoden">
+          <button
+            className=" btn btn-light button-method-exp"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseWidthExample"
+            aria-expanded="false"
+            aria-controls="collapseWidthExample"
+            onClick={handleClick}
+          >
             {isVisible ? (
-              <p><i class="fa-solid fa-caret-right"></i> Methoden ausblenden</p>
+              <p>
+                <i class="fa-solid fa-caret-right"></i> Methoden ausblenden
+              </p>
             ) : (
-              <p><i class="fa-solid fa-caret-left"></i> Methoden einblenden</p>
+              <p>
+                <i class="fa-solid fa-caret-left"></i> Methoden einblenden
+              </p>
             )}
           </button>
-          
-          
+
           <label className="methodenEinblenden" onClick={handleClick}>
             {label}
           </label>
-          </div>
-          
+        </div>
 
         <div id="datenstand" className="menuOptionen">
           <label className="einführung">Datenstand</label>
@@ -264,9 +268,10 @@ export const MethodenDiv = () => {
                 onSelectedValueChange={(selectedScope) => {
                   setmenuAge("00+");
                   setScope(selectedScope);
+                  setILM(false);
                   handleDiv1Selection();
                 }}
-              /> 
+              />
             </div>
             <div id="div2" class="hidden">
               <label for="scope-select">Alter:</label>
@@ -356,7 +361,7 @@ export const MethodenDiv = () => {
           isSZ={isSZ}
           data={data}
           EPIdata={EPIdata}
-          // ILMdata={ILMdata}
+          ILMdata={ILMdata}
           KITdata={KITdata}
           LMUdata={LMUdata}
           Nowcastdata={Nowcastdata}
@@ -366,6 +371,7 @@ export const MethodenDiv = () => {
           SZdata={SZdata}
           menuAge={menuAge}
           selectedScope={selectedScope}
+          datenstand_schwarz={datenstand_schwarz}
         />
 
         {/* Methoden ----------------------------------------------------------- */}
@@ -412,7 +418,7 @@ export const MethodenDiv = () => {
                     </td>
                   </td>
                 </div>
-
+                {/*2*/}
                 <tr>
                   <div
                     className={`container ${isEpiforecast ? "moved" : ""}`}
@@ -769,7 +775,13 @@ export const MethodenDiv = () => {
 
       <section id="tabelle" style={{ position: "absolute", top: "600px" }}>
         <div class="table">
-          <button class="btn btn-light button-table rounded" onClick={toggleCollapse}> <i class="fa-solid fa-caret-down"></i> Tabelle anzeigen</button>
+          <button
+            class="btn btn-light button-table rounded"
+            onClick={toggleCollapse}
+          >
+            {" "}
+            <i class="fa-solid fa-caret-down"></i> Tabelle anzeigen
+          </button>
           {isCollapsed && (
             <div
               className={`collapse ${!isCollapsed ? "show" : ""}`}

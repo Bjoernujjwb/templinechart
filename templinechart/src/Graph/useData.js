@@ -20,21 +20,12 @@ export const useData = (
   anzeige,
   date
 ) => {
+
   let unteresQuantile;
   let oberesQuantile;
 
 // console.log(methode + " " +selectedScope + " " + menuAge + " " + intervall + " " + " " + anzeige + " " + date);
 
-  // let populationTabelle = getPopulation(menuAge,selectedScope);
-
-  // console.log(populationTabelle);
-  
-  // let population = populationTabelle[0].population;
-
-
-  // d.value = (+d.mean/+population) * 100000;
-  // d.quantileKlein = (+[unteresQuantile]/population) * 100000;
-  // d.quantileGroß = (+d[oberesQuantile]/population) * 100000;
 
   const [data, setData] = useState(null);
 
@@ -63,6 +54,7 @@ export const useData = (
       }
 
       d.date = new Date(d.target_end_date);
+
       return d;
     }; 
 
